@@ -1,13 +1,49 @@
 const digitButtons = document.querySelectorAll('.digit');
 const display = document.querySelector('.display');
+const digitOperators = document.querySelectorAll('.operators');
+const equalButton = document.querySelector('#equal');
+const clearButton = document.querySelector('#clear');
 
 digitButtons.forEach((button) => {
     button.addEventListener('click', () => {
-        firstNumber += button.textContent;
-        display.textContent = firstNumber;
+        if (operator === '') {
+            firstNumber += button.textContent;
+            display.textContent = firstNumber;
+        }
+        else {
+            secondNumber += button.textContent;
+            display.textContent = secondNumber;
+        }
     })
 })
 
+digitOperators.forEach((button) => {
+    button.addEventListener('click', () => {
+        operator = button.textContent;
+    })
+})
+
+
+equalButton.addEventListener('click', () => {
+    const result = operate(Number(firstNumber), operator, Number(secondNumber));
+    display.textContent = result;
+
+    if (result === "Nope!") {
+        firstNumber = '';
+    }
+    else {
+        firstNumber = result.toString();
+    }
+    operator = '';
+    secondNumber = '';
+})
+
+clearButton.addEventListener('click', () => {
+    firstNumber = '';
+    operator = '';
+    secondNumber = '';
+    display.textContent = "0";
+})
 
 function add(a, b) {
     return a + b;
@@ -22,6 +58,9 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
+    if (b === 0) {
+        return "Nope!"
+    }
     return a / b;
 }
 
