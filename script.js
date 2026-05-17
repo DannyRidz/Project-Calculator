@@ -4,6 +4,29 @@ const digitOperators = document.querySelectorAll('.operators');
 const equalButton = document.querySelector('#equal');
 const clearButton = document.querySelector('#clear');
 const dotButton = document.querySelector('#dot');
+const backspaceButton = document.querySelector('#backspace');
+
+backspaceButton.addEventListener('click', () => {
+    if (resultDisplayed) {
+        return;
+    }
+
+    if (secondNumber !== '') {
+        secondNumber = secondNumber.slice(0, -1);
+        display.textContent = secondNumber || '0';
+    }
+
+    else if (operator !== '') {
+        operator = '';
+        display.textContent = firstNumber || '0';
+    }
+
+    else if (firstNumber !== '') {
+        firstNumber = firstNumber.slice(0, -1);
+        display.textContent = firstNumber || '0';
+    }
+    updateDotButton();
+})
 
 dotButton.addEventListener('click', () => {
     if (operator === '') {
@@ -37,12 +60,16 @@ dotButton.addEventListener('click', () => {
 
         display.textContent = secondNumber;
     }
+    updateDotButton()
 })
-
-
 
 digitButtons.forEach((button) => {
     button.addEventListener('click', () => {
+        if (resultDisplayed && operator === '') {
+            firstNumber = '';
+            resultDisplayed = false;
+        }
+
         if (operator === '') {
             firstNumber += button.textContent;
             display.textContent = firstNumber;
@@ -51,6 +78,8 @@ digitButtons.forEach((button) => {
             secondNumber += button.textContent;
             display.textContent = secondNumber;
         }
+
+        updateDotButton();
     })
 })
 
@@ -76,6 +105,8 @@ digitOperators.forEach((button) => {
         }
 
         operator = button.textContent;
+
+        updateDotButton();
     })
 })
 
@@ -96,7 +127,29 @@ equalButton.addEventListener('click', () => {
     }
     operator = '';
     secondNumber = '';
+    resultDisplayed = true;
+
+    updateDotButton();
 })
+
+clearButton.addEventListener('click', () => {
+    firstNumber = '';
+    operator = '';
+    secondNumber = '';
+    resultDisplayed = false;
+    display.textContent = "0";
+
+    updateDotButton();
+})
+
+function updateDotButton() {
+    if (operator === '') {
+        dotButton.disabled = firstNumber.includes('.');
+    }
+    else {
+        dotButton.disabled = secondNumber.includes('.');
+    }
+}
 
 function formatResult(result) {
     if (result === "Nope!") {
@@ -105,13 +158,6 @@ function formatResult(result) {
 
     return Math.round(result * 1000) / 1000;
 }
-
-clearButton.addEventListener('click', () => {
-    firstNumber = '';
-    operator = '';
-    secondNumber = '';
-    display.textContent = "0";
-})
 
 function add(a, b) {
     return a + b;
@@ -135,6 +181,7 @@ function divide(a, b) {
 let firstNumber = '';
 let operator = '';
 let secondNumber = '';
+let resultDisplayed = false;
 
 function operate(firstNumber, operator, secondNumber) {
     if (operator === '+') {
@@ -150,3 +197,39 @@ function operate(firstNumber, operator, secondNumber) {
         return divide(firstNumber, secondNumber);
     }
 }
+
+document.addEventListener('keydown', (event) => {
+    if (event.key >= '0' && event.key <= '9') {
+        const button = Array.from(digitButtons).find(
+            (digitButton) => digitButton.textContent === event.key
+        )
+        button.click();
+    }
+
+    else if (event.key === '+' || event.key === '-' || event.key === '*' || event.key === '/') {
+        const button = Array.from(digitOperators).find(
+            (operatorButton) => operatorButton.textContent === event.key
+        )
+        button.click();
+    }
+
+    else if (event.key === '.') {
+        dotButton.click();
+    }
+
+    else if (event.key === "Enter" || event.key === "=") {
+        event.preventDefault();
+        equalButton.click();
+    }
+
+    else if (event.key === "Backspace") {
+        event.preventDefault();
+        backspaceButton.click();
+    }
+
+    else if (event.key === "Escape") {
+        clearButton.click();
+    }
+})
+
+updateDotButton();
