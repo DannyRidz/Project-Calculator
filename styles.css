@@ -19,7 +19,7 @@ body {
     background: #1f2937;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
 }
 
@@ -46,6 +46,14 @@ button {
     background: #e5e7eb;
     color: #111827;
     transition: background 0.2s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button,
+.display {
+    min-width: 0;
 }
 
 button:hover {
@@ -68,6 +76,7 @@ button:active {
 #equal {
     background: #10b981;
     color: white;
+    grid-row: span 2;
 }
 
 #equal:hover {
@@ -78,7 +87,6 @@ button:active {
 #backspace {
     background: #ef4444;
     color: white;
-    grid-column: span 2;
 }
 
 #clear:hover,
@@ -89,4 +97,8 @@ button:active {
 #dot:disabled {
     background: #9ca3af;
     cursor: not-allowed;
+}
+
+#zero {
+    grid-column: span 2;
 }
