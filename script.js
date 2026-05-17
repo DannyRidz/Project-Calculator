@@ -3,6 +3,43 @@ const display = document.querySelector('.display');
 const digitOperators = document.querySelectorAll('.operators');
 const equalButton = document.querySelector('#equal');
 const clearButton = document.querySelector('#clear');
+const dotButton = document.querySelector('#dot');
+
+dotButton.addEventListener('click', () => {
+    if (operator === '') {
+        if (firstNumber.includes('.')) {
+            return;
+        }
+
+        else if (firstNumber === '') {
+            firstNumber = '0.';
+        }
+
+        else {
+            firstNumber += '.';
+        }
+
+        display.textContent = firstNumber;
+    }
+
+    else {
+        if (secondNumber.includes('.')) {
+            return;
+        }
+
+        else if (secondNumber === '') {
+            secondNumber = '0.';
+        }
+
+        else {
+            secondNumber += '.';
+        }
+
+        display.textContent = secondNumber;
+    }
+})
+
+
 
 digitButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -19,24 +56,55 @@ digitButtons.forEach((button) => {
 
 digitOperators.forEach((button) => {
     button.addEventListener('click', () => {
+        if (firstNumber === '') {
+            return;
+        }
+
+        if (firstNumber !== '' && operator !== '' && secondNumber !== '') {
+            const result = operate(Number(firstNumber), operator, Number(secondNumber));
+            const formattedResult = formatResult(result);
+            display.textContent = formattedResult;
+
+            if (formattedResult === "Nope!") {
+                firstNumber = '';
+            }
+            else {
+                firstNumber = formattedResult.toString();
+            }
+
+            secondNumber = '';
+        }
+
         operator = button.textContent;
     })
 })
 
-
 equalButton.addEventListener('click', () => {
-    const result = operate(Number(firstNumber), operator, Number(secondNumber));
-    display.textContent = result;
+    if (firstNumber === '' || operator === '' || secondNumber === '') {
+        return;
+    }
 
-    if (result === "Nope!") {
+    const result = operate(Number(firstNumber), operator, Number(secondNumber));
+    const formattedResult = formatResult(result);
+    display.textContent = formattedResult;
+
+    if (formattedResult === "Nope!") {
         firstNumber = '';
     }
     else {
-        firstNumber = result.toString();
+        firstNumber = formattedResult.toString();
     }
     operator = '';
     secondNumber = '';
 })
+
+function formatResult(result) {
+    if (result === "Nope!") {
+        return result;
+    }
+
+    return Math.round(result * 1000) / 1000;
+}
 
 clearButton.addEventListener('click', () => {
     firstNumber = '';
